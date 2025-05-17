@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Group Chat</title>
+    <link href="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1.0.0/dist/emoji-picker/emoji-picker.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --online: #2ecc71;
+            --offline: #e74c3c;
+            --admin: #9b59b6;
+            --warning: #f39c12;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Login Screen */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .login-box {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-box h1 {
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+
+        .login-box input:focus {
+            border-color: var(--secondary);
+            outline: none;
+        }
+
+        .login-box button {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+            transition: background 0.3s;
+        }
+
+        .login-box button:hover {
+            background: #2980b9;
+        }
+
+        #login-error {
+            color: var(--offline);
+            margin-top: 1rem;
+            display: none;
+        }
+
+        /* Chat Container */
+        .chat-container {
+            display: none;
+            max-width: 1200px;
+            margin: 0 auto;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Chat Header */
+        .chat-header {
+            background: white;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            z-index: 10;
+            position: relative;
+        }
+
+        .group-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .group-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--secondary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .group-details h2 {
+            font-size: 1.2rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .group-details p {
+            font-size: 0.85rem;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .online-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--online);
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .admin-controls {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .admin-btn {
+            background: var(--admin);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        /* Messages Area */
+        .messages-container {
+            height: calc(100vh - 180px);
+            overflow-y: auto;
+            padding: 1.5rem;
+            background: #f0f2f5;
+        }
+
+        .date-separator {
+            text-align: center;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+
+        .date-separator span {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #666;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .message {
+            background: white;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            max-width: 70%;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.sent {
+            background: #e3f2fd;
+            margin-left: auto;
+        }
+
+        .message.admin {
+            border-left: 4px solid var(--admin);
+        }
+
+        .message-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .sender-name {
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .sender-name.admin {
+            color: var(--admin);
+        }
+
+        .message-time {
+            color: #999;
+            font-size: 0.75rem;
+        }
+
+        .message-content {
+            word-wrap: break-word;
+        }
+
+        .message-actions {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            display: none;
+        }
+
+        .message:hover .message-actions {
+            display: flex;
+            gap: 0.3rem;
+        }
+
+        .action-btn {
+            background: rgba(0, 0, 0, 0.1);
+            border: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .action-btn:hover {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .reactions-container {
+            display: flex;
+            gap: 0.3rem;
+            margin-top: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .reaction {
+            background: rgba(0, 0, 0, 0.05);
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+        }
+
+        .reaction-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        /* Pinned Message */
+        .pinned-message {
+            background: #fff9e6;
+            border-left: 4px solid var(--warning);
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .pinned-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--warning);
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Typing Indicator */
+        .typing-indicator {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            font-size: 0.9rem;
+            color: #666;
+            display: none;
+            z-index: 5;
+        }
+
+        /* Input Area */
+        .input-area {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 1rem;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        #messageInput {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            resize: none;
+            max-height: 100px;
+        }
+
+        #messageInput:focus {
+            border-color: var(--secondary);
+            outline: none;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .send-btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+
+        .send-btn:hover {
+            background: #2980b9;
+        }
+
+        .emoji-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background 0.3s;
+        }
+
+        .emoji-btn:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background 0.3s;
+        }
+
+        .file-btn:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        /* Emoji Picker */
+        emoji-picker {
+            position: absolute;
+            bottom: 80px;
+            right: 20px;
+            z-index: 10;
+            display: none;
+        }
+
+        /* Notification Sound */
+        #notificationSound {
+            display: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .chat-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .admin-controls {
+                width: 100%;
+                justify-content: flex-end;
+            }
+
+            .message {
+                max-width: 85%;
+            }
+
+            .input-area {
+                padding: 0.8rem;
+            }
+
+            .send-btn {
+                padding: 12px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div class="login-container" id="loginContainer">
+        <div class="login-box">
+            <h1>🔒 Advanced Group Chat</h1>
+            <input type="text" id="username" placeholder="Your Name" autocomplete="off">
+            <input type="password" id="passkey" placeholder="Group Passkey (A99A)" autocomplete="off">
+            <button onclick="attemptLogin()">Join Chat</button>
+            <p id="login-error">Invalid passkey. Please try again.</p>
+        </div>
+    </div>
+
+    <!-- Chat Interface -->
+    <div class="chat-container" id="chatContainer">
+        <!-- Header -->
+        <div class="chat-header">
+            <div class="group-info">
+                <div class="group-icon">SG</div>
+                <div class="group-details">
+                    <h2>Secret Group</h2>
+                    <p><span class="online-dot"></span> <span id="memberCount">0</span> members online</p>
+                </div>
+            </div>
+            <div class="admin-controls" id="adminControls">
+                <button class="admin-btn" id="changePasskeyBtn">Change Passkey</button>
+                <button class="admin-btn" id="manageUsersBtn">Manage Users</button>
+            </div>
+        </div>
+
+        <!-- Pinned Message -->
+        <div class="pinned-message" id="pinnedMessageContainer" style="display: none;">
+            <div class="pinned-label">
+                📌 Pinned Message
+                <button class="action-btn" onclick="unpinMessage()">✕</button>
+            </div>
+            <div id="pinnedMessageContent"></div>
+        </div>
+
+        <!-- Messages Area -->
+        <div class="messages-container" id="messagesContainer">
+            <div id="messages"></div>
+        </div>
+
+        <!-- Typing Indicator -->
+        <div class="typing-indicator" id="typingIndicator"></div>
+
+        <!-- Input Area -->
+        <div class="input-area">
+            <input type="file" id="fileInput" class="file-input" accept="image/*, .pdf">
+            <button class="file-btn" onclick="document.getElementById('fileInput').click()">📎</button>
+            
+            <textarea id="messageInput" placeholder="Type a message..." rows="1"></textarea>
+            
+            <div class="action-buttons">
+                <button class="emoji-btn" id="emojiBtn">😊</button>
+                <button class="send-btn" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+
+        <!-- Emoji Picker -->
+        <emoji-picker id="emojiPicker"></emoji-picker>
+
+        <!-- Notification Sound -->
+        <audio id="notificationSound" src="https://assets.mixkit.co/sfx/preview/mixkit-software-interface-start-2574.mp3"></audio>
+
+        <!-- Admin Modal -->
+        <div class="modal" id="adminModal" style="display: none;">
+            <div class="modal-content">
+                <h3>Admin Controls</h3>
+                <div id="adminModalContent"></div>
+                <button onclick="closeAdminModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+
+    <!-- Emoji Picker -->
+    <script type="module">
+        import { EmojiButton } from 'https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.0/dist/index.min.js';
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1.0.0/dist/emoji-picker.min.js"></script>
+
+    <!-- Main App Script -->
+    <script>
+        // Firebase Configuration (replace with your actual config)
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        const storage = firebase.storage();
+
+        // Global Variables
+        let currentUser = null;
+        const GROUP_PASSKEY = "A99A";
+        const ADMIN_USERNAME = "admin";
+        let lastMessageDate = null;
+        let typingTimeout;
+        let emojiPicker;
+
+        // DOM Elements
+        const loginContainer = document.getElementById('loginContainer');
+        const chatContainer = document.getElementById('chatContainer');
+        const messagesContainer = document.getElementById('messagesContainer');
+        const messageInput = document.getElementById('messageInput');
+        const typingIndicator = document.getElementById('typingIndicator');
+        const memberCount = document.getElementById('memberCount');
+        const adminControls = document.getElementById('adminControls');
+        const pinnedMessageContainer = document.getElementById('pinnedMessageContainer');
+        const pinnedMessageContent = document.getElementById('pinnedMessageContent');
+        const notificationSound = document.getElementById('notificationSound');
+        const emojiBtn = document.getElementById('emojiBtn');
+        const emojiPickerElement = document.getElementById('emojiPicker');
+        const fileInput = document.getElementById('fileInput');
+
+        // Initialize Emoji Picker
+        function initEmojiPicker() {
+            emojiPicker = document.querySelector('emoji-picker');
+            emojiPicker.addEventListener('emoji-click', event => {
+                messageInput.value += event.detail.unicode;
+                messageInput.focus();
+            });
+        }
+
+        // Login Function
+        async function attemptLogin() {
+            const username = document.getElementById('username').value.trim();
+            const passkey = document.getElementById('passkey').value;
+
+            if (passkey !== GROUP_PASSKEY) {
+                showLoginError("Invalid passkey. The correct passkey is A99A");
+                return;
+            }
+
+            currentUser = {
+                username,
+                isAdmin: username.toLowerCase() === ADMIN_USERNAME.toLowerCase(),
+                lastActive: new Date()
+            };
+
+            initializeChat();
+        }
+
+        function showLoginError(message) {
+            const errorElem = document.getElementById('login-error');
+            errorElem.textContent = message;
+            errorElem.style.display = 'block';
+        }
+
+        // Initialize Chat
+        function initializeChat() {
+            loginContainer.style.display = 'none';
+            chatContainer.style.display = 'block';
+            
+            // Show/hide admin controls
+            adminControls.style.display = currentUser.isAdmin ? 'flex' : 'none';
+            
+            // Initialize components
+            initEmojiPicker();
+            setupPresence();
+            loadMessages();
+            setupTypingIndicator();
+            loadPinnedMessage();
+            
+            // Set up event listeners
+            messageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+            
+            messageInput.addEventListener('input', autoResize);
+            autoResize();
+            
+            // Scroll to bottom on initial load
+            setTimeout(scrollToBottom, 500);
+        }
+
+        // Auto-resize textarea
+        function autoResize() {
+            messageInput.style.height = 'auto';
+            messageInput.style.height = (messageInput.scrollHeight) + 'px';
+        }
+
+        // Presence System
+        function setupPresence() {
+            const userStatusRef = db.collection('status').doc(currentUser.username);
+            
+            // Update member count when status changes
+            db.collection('status').onSnapshot(snap => {
+                const onlineUsers = snap.docs.filter(doc => doc.data().state === 'online');
+                memberCount.textContent = onlineUsers.length;
+            });
+
+            // Set initial status to offline while we establish connection
+            firebase.firestore().disableNetwork().then(() => {
+                userStatusRef.set({
+                    state: 'offline',
+                    lastChanged: firebase.firestore.FieldValue.serverTimestamp(),
+                    username: currentUser.username
+                }, { merge: true });
+                
+                // Re-enable network and set status to online
+                firebase.firestore().enableNetwork().then(() => {
+                    userStatusRef.set({
+                        state: 'online',
+                        lastChanged: firebase.firestore.FieldValue.serverTimestamp(),
+                        username: currentUser.username
+                    }, { merge: true });
+                });
+            });
+
+            // Handle connection state changes
+            firebase.firestore().onConnectivityChanged(async online => {
+                await userStatusRef.set({
+                    state: online ? 'online' : 'offline',
+                    lastChanged: firebase.firestore.FieldValue.serverTimestamp(),
+                    username: currentUser.username
+                }, { merge: true });
+            });
+
+            // Update last active every minute
+            setInterval(() => {
+                if (currentUser) {
+                    userStatusRef.update({
+                        lastActive: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+            }, 60000);
+
+            // Clean up on page close
+            window.addEventListener('beforeunload', () => {
+                userStatusRef.set({
+                    state: 'offline',
+                    lastChanged: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+            });
+        }
+
+        // Typing Indicator
+        function setupTypingIndicator() {
+            const typingRef = db.collection('typing').doc(currentUser.username);
+            
+            // Listen for others typing
+            db.collection('typing').onSnapshot(snap => {
+                const typers = snap.docs
+                    .filter(doc => doc.data().isTyping && doc.id !== currentUser.username)
+                    .map(doc => doc.data().username);
+                
+                if (typers.length > 0) {
+                    typingIndicator.textContent = `${typers.join(', ')} ${typers.length > 1 ? 'are' : 'is'} typing...`;
+                    typingIndicator.style.display = 'block';
+                } else {
+                    typingIndicator.style.display = 'none';
+                }
+            });
+
+            // Set up typing detection for current user
+            messageInput.addEventListener('input', () => {
+                clearTimeout(typingTimeout);
+                
+                typingRef.set({
+                    isTyping: true,
+                    timestamp: new Date(),
+                    username: currentUser.username
+                });
+                
+                typingTimeout = setTimeout(() => {
+                    typingRef.update({
+                        isTyping: false
+                    });
+                }, 1500);
+            });
+        }
+
+        // Load Messages
+        function loadMessages() {
+            db.collection("messages")
+                .orderBy("timestamp", "asc")
+                .onSnapshot(snapshot => {
+                    let messagesHTML = '';
+                    let hasNewMessage = false;
+                    
+                    snapshot.docChanges().forEach(change => {
+                        if (change.type === 'added') {
+                            hasNewMessage = true;
+                        }
+                    });
+
+                    snapshot.forEach(doc => {
+                        const msg = doc.data();
+                        messagesHTML += formatMessage(msg, doc.id);
+                    });
+
+                    document.getElementById('messages').innerHTML = messagesHTML;
+                    
+                    if (hasNewMessage) {
+                        playNotificationSound();
+                        scrollToBottom();
+                    }
+                });
+        }
+
+        // Format Message with Date Separators
+        function formatMessage(msg, msgId) {
+            const msgDate = msg.timestamp?.toDate();
+            let dateSeparator = '';
+            
+            // Format date (Today, Yesterday, or full date)
+            if (msgDate) {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                const msgDay = new Date(msgDate);
+                msgDay.setHours(0, 0, 0, 0);
+                
+                const diffDays = Math.round((today - msgDay) / (1000 * 60 * 60 * 24));
+                
+                let dayString;
+                if (diffDays === 0) dayString = 'Today';
+                else if (diffDays === 1) dayString = 'Yesterday';
+                else dayString = msgDay.toLocaleDateString();
+                
+                // Add date separator if needed
+                if (!lastMessageDate || lastMessageDate !== dayString) {
+                    dateSeparator = `<div class="date-separator"><span>${dayString}</span></div>`;
+                    lastMessageDate = dayString;
+                }
+            }
+            
+            // Format time
+            const timeString = msgDate ? msgDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+            
+            // Check if message is pinned
+            const isPinned = msg.pinned || false;
+            
+            // Message actions (edit/delete)
+            let messageActions = '';
+            if (currentUser.username === msg.sender || currentUser.isAdmin) {
+                messageActions = `
+                    <div class="message-actions">
+                        ${currentUser.username === msg.sender ? `
+                            <button class="action-btn" onclick="editMessage('${msgId}')">✏️</button>
+                        ` : ''}
+                        <button class="action-btn" onclick="deleteMessage('${msgId}')">🗑️</button>
+                        ${currentUser.isAdmin ? `
+                            <button class="action-btn" onclick="togglePinMessage('${msgId}', ${!isPinned})">
+                                ${isPinned ? '📌' : '📄'}
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+            }
+            
+            // Reactions
+            let reactionsHTML = '';
+            if (msg.reactions && Object.keys(msg.reactions).length > 0) {
+                reactionsHTML = '<div class="reactions-container">';
+                for (const [emoji, users] of Object.entries(msg.reactions)) {
+                    reactionsHTML += `
+                        <div class="reaction">
+                            <span>${emoji}</span>
+                            <span>${users.length}</span>
+                            <button class="reaction-btn" onclick="toggleReaction('${msgId}', '${emoji}')">+</button>
+                        </div>
+                    `;
+                }
+                reactionsHTML += '</div>';
+            }
+            
+            // Message classes
+            let messageClasses = 'message';
+            if (currentUser.username === msg.sender) messageClasses += ' sent';
+            if (msg.sender.toLowerCase() === ADMIN_USERNAME.toLowerCase()) messageClasses += ' admin';
+            if (msg.edited) messageClasses += ' edited';
+            
+            return `
+                ${dateSeparator}
+                <div class="${messageClasses}" id="msg-${msgId}">
+                    ${messageActions}
+                    <div class="message-info">
+                        <span class="sender-name ${msg.sender.toLowerCase() === ADMIN_USERNAME.toLowerCase() ? 'admin' : ''}">
+                            ${msg.sender}
+                        </span>
+                        <span class="message-time">${timeString}</span>
+                    </div>
+                    <div class="message-content">
+                        ${msg.text || ''}
+                        ${msg.imageUrl ? `<img src="${msg.imageUrl}" style="max-width: 100%; border-radius: 8px; margin-top: 0.5rem;">` : ''}
+                        ${msg.fileUrl ? `<a href="${msg.fileUrl}" target="_blank">📄 Download File</a>` : ''}
+                        ${msg.edited ? '<small style="color: #999;">(edited)</small>' : ''}
+                    </div>
+                    ${reactionsHTML}
+                </div>
+            `;
+        }
+
+        // Send Message
+        async function sendMessage() {
+            const text = messageInput.value.trim();
+            
+            if (text) {
+                try {
+                    await db.collection("messages").add({
+                        text,
+                        sender: currentUser.username,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                        edited: false,
+                        pinned: false
+                    });
+                    
+                    messageInput.value = '';
+                    autoResize();
+                    scrollToBottom();
+                } catch (error) {
+                    console.error("Error sending message:", error);
+                }
+            }
+        }
+
+        // File Upload
+        fileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            try {
+                // Upload file to Firebase Storage
+                const storageRef = storage.ref(`files/${file.name}`);
+                const uploadTask = storageRef.put(file);
+                
+                uploadTask.on('state_changed', 
+                    (snapshot) => {
+                        // Progress monitoring could be added here
+                    }, 
+                    (error) => {
+                        console.error("Upload error:", error);
+                    }, 
+                    async () => {
+                        // Upload complete
+                        const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                        
+                        // Send message with file
+                        await db.collection("messages").add({
+                            sender: currentUser.username,
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                            [file.type.startsWith('image') ? 'imageUrl' : 'fileUrl']: downloadURL,
+                            fileName: file.name,
+                            pinned: false
+                        });
+                        
+                        scrollToBottom();
+                    }
+                );
+            } catch (error) {
+                console.error("Error uploading file:", error);
+            }
+            
+            // Reset file input
+            fileInput.value = '';
+        });
+
+        // Edit Message
+        async function editMessage(messageId) {
+            const messageRef = db.collection("messages").doc(messageId);
+            const messageDoc = await messageRef.get();
+            
+            if (!messageDoc.exists) return;
+            
+            const currentText = messageDoc.data().text;
+            const newText = prompt("Edit your message:", currentText);
+            
+            if (newText && newText !== currentText) {
+                await messageRef.update({
+                    text: newText,
+                    edited: true,
+                    editTimestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            }
+        }
+
+        // Delete Message
+        async function deleteMessage(messageId) {
+            if (confirm("Are you sure you want to delete this message?")) {
+                await db.collection("messages").doc(messageId).delete();
+            }
+        }
+
+        // Pin/Unpin Message
+        async function togglePinMessage(messageId, pin) {
+            await db.collection("messages").doc(messageId).update({
+                pinned: pin
+            });
+            
+            if (pin) {
+                loadPinnedMessage();
+            }
+        }
+
+        // Load Pinned Message
+        async function loadPinnedMessage() {
+            const pinnedSnapshot = await db.collection("messages")
+                .where("pinned", "==", true)
+                .orderBy("timestamp", "desc")
+                .limit(1)
+                .get();
+            
+            if (!pinnedSnapshot.empty) {
+                const pinnedMsg = pinnedSnapshot.docs[0].data();
+                pinnedMessageContent.innerHTML = `
+                    <strong>${pinnedMsg.sender}:</strong> ${pinnedMsg.text || ''}
+                    ${pinnedMsg.imageUrl ? `<img src="${pinnedMsg.imageUrl}" style="max-width: 100%; border-radius: 4px; margin-top: 0.5rem;">` : ''}
+                `;
+                pinnedMessageContainer.style.display = 'block';
+            } else {
+                pinnedMessageContainer.style.display = 'none';
+            }
+        }
+
+        // Unpin Message
+        async function unpinMessage() {
+            const pinnedSnapshot = await db.collection("messages")
+                .where("pinned", "==", true)
+                .get();
+            
+            const batch = db.batch();
+            pinnedSnapshot.forEach(doc => {
+                batch.update(doc.ref, { pinned: false });
+            });
+            
+            await batch.commit();
+            pinnedMessageContainer.style.display = 'none';
+        }
+
+        // Message Reactions
+        async function toggleReaction(messageId, emoji) {
+            const messageRef = db.collection("messages").doc(messageId);
+            const messageDoc = await messageRef.get();
+            
+            if (!messageDoc.exists) return;
+            
+            const reactions = messageDoc.data().reactions || {};
+            const userReactionIndex = reactions[emoji] ? 
+                reactions[emoji].indexOf(currentUser.username) : -1;
+            
+            if (userReactionIndex > -1) {
+                // Remove reaction
+                reactions[emoji].splice(userReactionIndex, 1);
+                if (reactions[emoji].length === 0) {
+                    delete reactions[emoji];
+                }
+            } else {
+                // Add reaction
+                if (!reactions[emoji]) {
+                    reactions[emoji] = [];
+                }
+                reactions[emoji].push(currentUser.username);
+            }
+            
+            await messageRef.update({ reactions });
+        }
+
+        // Admin Functions
+        async function changePasskey() {
+            const newPasskey = prompt("Enter new passkey:");
+            if (newPasskey) {
+                // In a real app, you would update this in a secure backend
+                alert(`Passkey would be changed to ${newPasskey} in a real implementation. 
+                For this demo, the passkey remains A99A.`);
+            }
+        }
+
+        // Notification Sound
+        function playNotificationSound() {
+            if (document.hidden) {
+                notificationSound.currentTime = 0;
+                notificationSound.play().catch(e => console.log("Audio play failed:", e));
+            }
+        }
+
+        // Scroll to Bottom
+        function scrollToBottom() {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Toggle Emoji Picker
+        function toggleEmojiPicker() {
+            emojiPicker.style.display = emojiPicker.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            emojiBtn.addEventListener('click', toggleEmojiPicker);
+            document.getElementById('changePasskeyBtn').addEventListener('click', changePasskey);
+            
+            // Close emoji picker when clicking elsewhere
+            document.addEventListener('click', (e) => {
+                if (!emojiPicker.contains(e.target) && e.target !== emojiBtn) {
+                    emojiPicker.style.display = 'none';
+                }
+            });
+            
+            // Notification permission
+            if (Notification.permission !== 'granted') {
+                Notification.requestPermission();
+            }
+        });
+
+        // Page Visibility API for notifications
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                // User returned to the tab - you could mark messages as read here
+            }
+        });
+    </script>
+</body>
+  </html>
