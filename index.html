@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookHub - Premium Reading</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #f8f9fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        header {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            perspective: 1000px;
+        }
+
+        .logo span {
+            display: inline-block;
+            animation: flip 2s infinite;
+            transform-style: preserve-3d;
+        }
+
+        @keyframes flip {
+            0% { transform: rotateY(0deg); }
+            50% { transform: rotateY(360deg); }
+            100% { transform: rotateY(360deg); }
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: #3498db;
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #3498db;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .premium-features {
+            background: linear-gradient(135deg, #f7fafc 70%, #dbeafe 100%);
+            padding: 3rem 2rem 2rem 2rem;
+            margin: 0 0 2rem 0;
+        }
+
+        .premium-features .features-container {
+            max-width: 950px;
+            margin: 0 auto;
+        }
+
+        .premium-features h2 {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .premium-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+        }
+
+        .premium-card {
+            background: white;
+            flex: 1 1 260px;
+            min-width: 230px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px #c3dafc33;
+            padding: 2rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .premium-card span {
+            font-size: 2rem;
+            color: #3498db;
+        }
+
+        .premium-card h3 {
+            margin: 1rem 0 0.5rem;
+        }
+
+        .premium-card p {
+            color: #64748b;
+        }
+
+        .premium-features .cta {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .premium-features .cta a {
+            background: #3498db;
+            color: white;
+            font-weight: bold;
+            padding: 1rem 2.5rem;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            text-decoration: none;
+            box-shadow: 0 3px 12px #60a5fa33;
+            transition: background 0.2s;
+        }
+
+        .premium-features .cta a:hover {
+            background: #2563eb;
+        }
+
+        .premium-features .cta div {
+            margin-top: 0.7rem;
+            color: #64748b;
+            font-size: 0.98rem;
+        }
+
+        .premium-features .cta div a {
+            color: #3498db;
+            text-decoration: underline;
+            font-weight: 600;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            color: white;
+            padding: 6rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center/cover;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .featured-books {
+            padding: 4rem 2rem;
+            animation: fadeIn 1s ease;
+        }
+
+        .books-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            color: #2c3e50;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 3px;
+            bottom: -10px;
+            left: 20%;
+            background: linear-gradient(90deg, #3498db, #2c3e50);
+            border-radius: 3px;
+        }
+
+        .book-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .book-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform: translateY(0);
+        }
+
+        .book-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        .book-cover {
+            height: 250px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .book-card:hover .book-cover {
+            transform: scale(1.03);
+        }
+
+        .book-info {
+            padding: 1.5rem;
+        }
+
+        .book-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            transition: color 0.3s ease;
+        }
+
+        .book-card:hover .book-title {
+            color: #3498db;
+        }
+
+        .book-author {
+            color: #7f8c8d;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .read-btn {
+            width: 100%;
+            padding: 12px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .read-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+
+        .read-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .read-btn:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(20, 20);
+                opacity: 0;
+            }
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 3rem;
+            position: relative;
+        }
+
+        .page-btn {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            color: #4b5563;
+            transform: translateY(0);
+        }
+
+        .page-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+        }
+
+        .page-btn.active {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 8px 15px rgba(59, 130, 246, 0.4);
+            transform: translateY(-5px);
+        }
+
+        .password-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .password-content {
+            background: white;
+            width: 90%;
+            max-width: 400px;
+            padding: 2.5rem;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            animation: zoomIn 0.3s ease;
+        }
+
+        .password-content h3 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .password-content input {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 1.5rem 0;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .password-content input:focus {
+            outline: none;
+            border-color: #2980b9;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        .unlock-btn {
+            background: #3498db;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .unlock-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        footer {
+            background: #2c3e50;
+            color: white;
+            padding: 3rem 2rem;
+            margin-top: 4rem;
+            text-align: center;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .chatbot-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .chatbot-icon {
+            width: 60px;
+            height: 60px;
+            background: #25D366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .chatbot-icon:hover {
+            transform: scale(1.1) rotate(10deg);
+            animation: none;
+        }
+
+        .chatbot-icon svg {
+            width: 30px;
+            height: 30px;
+            fill: white;
+        }
+
+        .chat-window {
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: none;
+            flex-direction: column;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chat-window.active {
+            display: flex;
+            transform: translateY(0);
+            opacity: 1;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #128C7E, #075E54);
+            color: white;
+            padding: 15px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .chat-header span {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .chat-body {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: #ece5dd;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: #128C7E #f5f5f5;
+        }
+
+        .chat-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-body::-webkit-scrollbar-track {
+            background: #f5f5f5;
+            border-radius: 10px;
+        }
+
+        .chat-body::-webkit-scrollbar-thumb {
+            background-color: #128C7E;
+            border-radius: 10px;
+        }
+
+        .chat-message {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 18px;
+            animation: fadeIn 0.3s ease;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            position: relative;
+            word-wrap: break-word;
+        }
+
+        .bot-message {
+            background: white;
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .user-message {
+            background: #DCF8C6;
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .quick-reply {
+            display: inline-block;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 15px;
+            margin: 5px 0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .quick-reply:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+        }
+
+        .chat-input-container {
+            padding: 10px;
+            border-top: 1px solid #ddd;
+            background: #f5f5f5;
+            border-radius: 0 0 15px 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 20px;
+            outline: none;
+            font-size: 0.95rem;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .chat-input:focus {
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .send-btn {
+            background: #25D366;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .send-btn:hover {
+            background: #128C7E;
+            transform: scale(1.05);
+        }
+
+        .send-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+
+        .close-btn {
+            cursor: pointer;
+            padding: 5px;
+            font-size: 1.2rem;
+            transition: transform 0.2s ease;
+        }
+
+        .close-btn:hover {
+            transform: rotate(90deg);
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            background: white;
+            border-radius: 18px;
+            align-self: flex-start;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            margin-bottom: 5px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #128C7E;
+            border-radius: 50%;
+            margin: 0 2px;
+            animation: typingAnimation 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typingAnimation {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-5px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            nav ul {
+                justify-content: center;
+            }
+
+            .hero {
+                padding: 4rem 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .chat-window {
+                width: 300px;
+                height: 450px;
+                right: 20px;
+                bottom: 80px;
+            }
+            .premium-grid {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .book-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chat-window {
+                width: 280px;
+                right: 10px;
+                bottom: 70px;
+            }
+        }
+
+        #upgradeFloat {
+            position:fixed; left:32px; bottom:32px; z-index:1100;
+            background:linear-gradient(90deg,#2563eb,#38bdf8); color:white;
+            padding:0.7rem 1.5rem; border-radius:50px; font-weight:700;
+            box-shadow:0 4px 18px #60a5fa44; font-size:1rem; cursor:pointer;
+            border:none; outline:none; transition:background 0.2s;
+        }
+        #upgradeFloat:hover { background:linear-gradient(90deg,#38bdf8,#2563eb);}
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <span>B</span><span>o</span><span>o</span><span>k</span><span>H</span><span>u</span><span>b</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="https://mub.me/tartilz" target="_blank">Membership</a></li>
+                    <li><a href="#featured">Featured</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Premium Features Section -->
+    <section class="premium-features" id="premiumFeatures">
+        <div class="features-container">
+            <h2>Unlock More With BookHub Premium</h2>
+            <div class="premium-grid">
+                <div class="premium-card">
+                    <span>🔓</span>
+                    <h3>Unlimited Book Access</h3>
+                    <p>Read our entire library of premium and exclusive books, updated every month.</p>
+                </div>
+                <div class="premium-card">
+                    <span>🎧</span>
+                    <h3>Audiobook Mode</h3>
+                    <p>Listen to select books with built-in audio player and adjustable speed.</p>
+                </div>
+                <div class="premium-card">
+                    <span>📝</span>
+                    <h3>Notes & Highlights</h3>
+                    <p>Highlight text, take notes, and sync them across your devices.</p>
+                </div>
+                <div class="premium-card">
+                    <span>🤝</span>
+                    <h3>Reading Circles</h3>
+                    <p>Join book clubs, comment, and share your thoughts with fellow readers.</p>
+                </div>
+            </div>
+            <div class="cta">
+                <a href="https://mub.me/tartilz" target="_blank">Get BookHub Premium</a>
+                <div>
+                    <span>Already a member? <a href="#home">Sign in above</a></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>Your Premium Digital Library</h1>
+            <p>Access thousands of exclusive books with your membership</p>
+        </div>
+    </section>
+
+    <!-- Featured Books Section -->
+    <section class="featured-books" id="featured">
+        <div class="books-container">
+            <h2 class="section-title">Featured Collection</h2>
+            <div class="book-grid" id="bookGrid"></div>
+            <div class="pagination" id="pagination"></div>
+        </div>
+    </section>
+
+    <!-- Password Modal -->
+    <div class="password-modal" id="passwordModal">
+        <div class="password-content">
+            <h3>Premium Access Required</h3>
+            <input type="password" id="passkeyInput" placeholder="Enter your passkey">
+            <button class="unlock-btn" onclick="validatePasskey()">Unlock Book</button>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="footer-container">
+            <p>&copy; 2023 BookHub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Support Bot -->
+    <div class="chatbot-container" id="chatbotContainer">
+        <div class="chatbot-icon" id="chatbotIcon">
+            <svg viewBox="0 0 24 24">
+                <path d="M19.005 3.175H4.674C3.642 3.175 3 3.789 3 4.821V15.69c0 1.032.642 1.646 1.674 1.646h5.593l3.293 3.293a.999.999 0 0 0 1.414 0l3.293-3.293h5.593c1.032 0 1.674-.614 1.674-1.646V4.821c0-1.032-.642-1.646-1.674-1.646zm-4.49 10.656a.887.887 0 0 1-.887.886H9.762a.887.887 0 0 1-.886-.886v-.844c0-.489.398-.886.886-.886h3.866c.489 0 .887.397.887.886v.844zm.996-3.766a.887.887 0 0 1-.887.886H8.766a.887.887 0 0 1-.886-.886v-.844c0-.489.397-.886.886-.886h6.858c.489 0 .887.397.887.886v.844z"/>
+            </svg>
+        </div>
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <span>BookHub Support</span>
+                <div class="close-btn" id="closeChat">×</div>
+            </div>
+            <div class="chat-body" id="chatBody"></div>
+            <div class="chat-input-container">
+                <input type="text" class="chat-input" id="userInput" placeholder="Type your message...">
+                <button class="send-btn" onclick="sendMessage()">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <button id="upgradeFloat" onclick="window.open('https://mub.me/tartilz','_blank')">🔑 Unlock Premium</button>
+    <script>
+        // Add Premium badge to Membership nav link
+        document.querySelectorAll('nav ul li a').forEach(a=>{
+            if(a.textContent.trim().toLowerCase()==='membership'){
+                a.innerHTML += ' <span style="background:#fbbf24; color:#fff; border-radius:6px; padding:2px 7px; font-size:0.8em; margin-left:7px; vertical-align:middle;">Premium</span>';
+            }
+        });
+
+        // Book Data - Add new books at the TOP of this array
+        let books = [
+            {
+                id: 6,
+                title: "Advanced Quantum Physics",
+                author: "Dr. Lisa Randall",
+                image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                url: "/read/quantum-physics",
+                redirectUrl: "https://example.com/quantum-physics"
+            },
+            {
+                id: 5,
+                title: "AI Revolution",
+                author: "Andrew Ng",
+                image: "https://images.unsplash.com/photo-1677442135136-760c81364e7f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                url: "/read/ai-revolution",
+                redirectUrl: "https://example.com/ai-revolution"
+            },
+            {
+                id: 4,
+                title: "Modern Philosophy",
+                author: "Daniel Dennett",
+                image: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                url: "/read/modern-philosophy",
+                redirectUrl: "https://example.com/modern-philosophy"
+            },
+            {
+                id: 3,
+                title: "Climate Solutions",
+                author: "Bill Gates",
+                image: "https://images.unsplash.com/photo-1615751072497-5f5169febe17?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                url: "/read/climate-solutions",
+                redirectUrl: "https://example.com/climate-solutions"
+            },
+            {
+                id: 2,
+                title: "Economic Theories",
+                author: "Thomas Piketty",
+                image: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                url: "/read/economic-theories",
+                redirectUrl: "https://example.com/economic-theories"
+            },
+            {
+                id: 1,
+                title: "Ancient History",
+                author: "Mary Beard",
+                image: "https://images.unsplash.com/photo-1471623817296-aa07ae5c9f47?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+                url: "/read/ancient-history",
+                redirectUrl: "https://example.com/ancient-history"
+            }
+        ];
+
+        // Pagination Settings
+        const booksPerPage = 4;
+        let currentPage = 1;
+        let currentBook = null;
+
+        // Generate Book Cards
+        function generateBookCard(book) {
+            return `
+                <div class="book-card">
+                    <div class="book-cover" style="background-image: url('${book.image}')"></div>
+                    <div class="book-info">
+                        <h3 class="book-title">${book.title}</h3>
+                        <p class="book-author">by ${book.author}</p>
+                        <button class="read-btn" 
+                            onclick="showPasswordModal(${book.id})">
+                            Read Now
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Update Pagination
+        function updatePagination() {
+            const totalPages = Math.ceil(books.length / booksPerPage);
+            const paginationDiv = document.getElementById('pagination');
+            paginationDiv.innerHTML = '';
+
+            for(let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+                btn.textContent = i;
+                btn.onclick = () => changePage(i);
+                paginationDiv.appendChild(btn);
+            }
+        }
+
+        // Change Page
+        function changePage(page) {
+            currentPage = page;
+            const start = (page - 1) * booksPerPage;
+            const end = start + booksPerPage;
+            
+            document.getElementById('bookGrid').innerHTML = books
+                .slice(start, end)
+                .map(book => generateBookCard(book))
+                .join('');
+            
+            updatePagination();
+        }
+
+        // Password Validation
+        function validatePasskey() {
+            const input = document.getElementById('passkeyInput').value.trim();
+            if(input.startsWith('T') && input.endsWith('7')) {
+                if (currentBook) {
+                    const book = books.find(b => b.id === currentBook);
+                    if (book && book.redirectUrl) {
+                        window.location.href = book.redirectUrl;
+                    } else {
+                        window.location.href = 'https://tartil.hd.net';
+                    }
+                } else {
+                    window.location.href = 'https://tartil.hd.net';
+                }
+            } else {
+                window.location.href = "https://mub.me/tartilz";
+            }
+            document.getElementById('passwordModal').style.display = 'none';
+        }
+
+        // Password Modal Functions
+        function showPasswordModal(bookId) {
+            currentBook = bookId;
+            document.getElementById('passwordModal').style.display = 'block';
+        }
+
+        // Close Modal
+        window.onclick = function(event) {
+            if(event.target == document.getElementById('passwordModal')) {
+                document.getElementById('passwordModal').style.display = 'none';
+            }
+        }
+
+        // Chatbot Logic
+        let chatState = {
+            step: 'email',
+            email: '',
+            problem: '',
+            history: []
+        };
+
+        // Common problems with quick replies
+        const commonProblems = [
+            { label: "Passkey not working", value: "passkey" },
+            { label: "Membership issues", value: "membership" },
+            { label: "Can't access books", value: "access" },
+            { label: "Payment problems", value: "payment" },
+            { label: "Other issue", value: "other" }
+        ];
+
+        // Toggle Chat Window
+        const chatbotIcon = document.getElementById('chatbotIcon');
+        const chatWindow = document.getElementById('chatWindow');
+
+        chatbotIcon.addEventListener('click', () => {
+            chatWindow.classList.add('active');
+            chatbotIcon.style.display = 'none';
+            updateChatDisplay();
+            
+            if(chatState.history.length === 0) {
+                addBotMessage('👋 Hi there! To help you better, please provide your email address:');
+            }
+        });
+
+        // Close Chat
+        document.getElementById('closeChat').addEventListener('click', () => {
+            chatWindow.classList.remove('active');
+            chatbotIcon.style.display = 'flex';
+        });
+
+        // Chat Logic
+        function updateChatDisplay() {
+            const chatBody = document.getElementById('chatBody');
+            chatBody.innerHTML = chatState.history.map(msg => `
+                <div class="chat-message ${msg.type}-message">
+                    ${msg.text}
+                </div>
+            `).join('');
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const chatBody = document.getElementById('chatBody');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'typing-indicator';
+            typingDiv.innerHTML = `
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            `;
+            chatBody.appendChild(typingDiv);
+            chatBody.scrollTop = chatBody.scrollHeight;
+            return typingDiv;
+        }
+
+        function hideTypingIndicator(typingDiv) {
+            typingDiv.remove();
+        }
+
+        function addBotMessage(text, isQuickReply = false) {
+            if (isQuickReply) {
+                const quickReplies = commonProblems.map(problem => `
+                    <div class="quick-reply" onclick="handleQuickReply('${problem.value}')">
+                        ${problem.label}
+                    </div>
+                `).join('');
+                
+                chatState.history.push({
+                    type: 'bot',
+                    text: text + '<div style="margin-top: 10px;">' + quickReplies + '</div>'
+                });
+            } else {
+                chatState.history.push({
+                    type: 'bot',
+                    text: text
+                });
+            }
+            updateChatDisplay();
+        }
+
+        function addUserMessage(text) {
+            chatState.history.push({
+                type: 'user',
+                text: text
+            });
+            updateChatDisplay();
+        }
+
+        function handleQuickReply(value) {
+            const problem = commonProblems.find(p => p.value === value);
+            if (problem) {
+                if (value === 'other') {
+                    addUserMessage('I have another issue');
+                    const typingDiv = showTypingIndicator();
+                    setTimeout(() => {
+                        hideTypingIndicator(typingDiv);
+                        addBotMessage('Please describe your issue and we will get back to you soon!');
+                    }, 900);
+                } else {
+                    addUserMessage(problem.label);
+                    const typingDiv = showTypingIndicator();
+                    setTimeout(() => {
+                        hideTypingIndicator(typingDiv);
+                        addBotMessage('Our team is aware of this issue and will resolve it as soon as possible. If it is urgent, please contact support at <b>support@bookhub.com</b>.');
+                    }, 900);
+                }
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('userInput');
+            const msg = input.value.trim();
+            if (!msg) return;
+            addUserMessage(msg);
+            input.value = '';
+
+            if(chatState.step === 'email') {
+                chatState.email = msg;
+                chatState.step = 'problem';
+                const typingDiv = showTypingIndicator();
+                setTimeout(() => {
+                    hideTypingIndicator(typingDiv);
+                    addBotMessage('What can we help you with? Choose one:', true);
+                }, 800);
+            } else if(chatState.step === 'problem') {
+                chatState.problem = msg;
+                chatState.step = 'done';
+                const typingDiv = showTypingIndicator();
+                setTimeout(() => {
+                    hideTypingIndicator(typingDiv);
+                    addBotMessage('Thanks! Our team will reach out to your email soon! If it is urgent, contact <b>support@bookhub.com</b>.');
+                }, 900);
+            } else {
+                const typingDiv = showTypingIndicator();
+                setTimeout(() => {
+                    hideTypingIndicator(typingDiv);
+                    addBotMessage('Thank you for reaching out. For more help, email support@bookhub.com');
+                }, 900);
+            }
+        }
+
+        document.getElementById('userInput').addEventListener('keydown', function(e) {
+            if(e.key === 'Enter') sendMessage();
+        });
+
+        // Initial Page Load
+        changePage(1);
+
+    </script>
+</body>
+  </html>
